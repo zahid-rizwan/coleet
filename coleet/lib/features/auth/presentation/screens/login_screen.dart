@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -97,12 +98,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Password field
                     TextFormField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Password',
-                        prefixIcon: Icon(Icons.lock_outline),
-                        suffixIcon: Icon(Icons.visibility_off_outlined),
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
                       ),
-                      obscureText: true,
+                      obscureText: _obscurePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
@@ -126,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Spacer(),
                         TextButton(
                           onPressed: () {
-                            // Handle forgot password
+                            Navigator.pushNamed(context, AppRouter.forgotPasswordRoute);
                           },
                           child: Text(
                             'Forgot the password?',
@@ -151,11 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                 ),
-
-
                               );
-                              Navigator.pushNamed(context, AppRouter.profileSetupRoute);
-
                             }
                           },
                           child: state is AuthLoading
